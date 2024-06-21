@@ -1,0 +1,91 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class Quiz {
+    private List<Question> questions;
+    private Scanner scanner;
+    private int score;
+    private int totalQuestions;
+    private int questionIndex;
+    private final int QUIZ_DURATION = 60; // Duration of the quiz in seconds
+    private long startTime;
+
+    public Quiz() {
+        questions = new ArrayList<>();
+        scanner = new Scanner(System.in);
+        score = 0;
+        questionIndex = 0;
+        startTime = 0;
+
+        // Sample questions
+        questions.add(new Question("What is the capital of France?", "Paris"));
+        questions.add(new Question("What is 2 + 2?", "4"));
+        questions.add(new Question("Who wrote Hamlet?", "Shakespeare"));
+
+        totalQuestions = questions.size();
+    }
+
+    public void startQuiz() {
+        System.out.println("Welcome to the Quiz!\n");
+        System.out.println("You have " + QUIZ_DURATION + " seconds to complete " + totalQuestions + " questions.");
+        System.out.println("Press Enter to start the quiz...");
+        scanner.nextLine();
+
+        startTime = System.currentTimeMillis();
+
+        // Loop through each question
+        while (questionIndex < totalQuestions && !isTimeUp()) {
+            Question currentQuestion = questions.get(questionIndex);
+            System.out.println("Question " + (questionIndex + 1) + ": " + currentQuestion.getQuestion());
+            System.out.print("Your answer: ");
+            String userAnswer = scanner.nextLine().trim().toLowerCase();
+
+            if (userAnswer.equals(currentQuestion.getAnswer().toLowerCase())) {
+                System.out.println("Correct!");
+                score++;
+            } else {
+                System.out.println("Incorrect. The correct answer is: " + currentQuestion.getAnswer());
+            }
+
+            questionIndex++;
+        }
+
+        // Quiz finished or time's up
+        showResult();
+    }
+
+    private boolean isTimeUp() {
+        long currentTime = System.currentTimeMillis();
+        long elapsedTime = (currentTime - startTime) / 1000; // Convert to seconds
+        return elapsedTime >= QUIZ_DURATION;
+    }
+
+    private void showResult() {
+        System.out.println("\nQuiz finished!");
+        System.out.println("Your score: " + score + "/" + totalQuestions);
+    }
+
+    public static void main(String[] args) {
+        Quiz quiz = new Quiz();
+        quiz.startQuiz();
+    }
+
+    public class Question {
+        private String question;
+        private String answer;
+
+        public Question(String question, String answer) {
+            this.question = question;
+            this.answer = answer;
+        }
+
+        public String getQuestion() {
+            return question;
+        }
+
+        public String getAnswer() {
+            return answer;
+        }
+    }
+}
